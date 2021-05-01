@@ -1,25 +1,79 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react'
+// import Products from './components/Products/Products';
+// import NavBar from './components/NavBar/NavBar';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import { Products, NavBar, Cart } from './components';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+
+import { commerce } from './lib/commerce' // this is like backend with my API key;
+
+
+
+const App = () => {
+    const [products, setProducts] = useState([]);
+    const [cart, setCart] = useState({})
+
+
+    const fetchProducts = async () => {
+        const res = await commerce.products.list();
+        setProducts(res.data);
+    }
+
+    const fetchCart = async () => {
+        const res = await commerce.cart.retrieve();
+        // console.log(res)
+        // alert(1)
+        setCart(res);
+    }
+
+    const handleAddToCart = async (productId, quantity) => {
+        const res = await commerce.cart.add(productId, quantity);
+
+        setCart(res.cart)
+    }
+
+
+    const handleUpdateCartQty = async (lineItemId, quantity) => {
+        const res = await commerce.cart.update(lineItemId, { quantity });
+
+        setCart(res.cart);
+    };
+
+    const handleRemoveFromCart = async (lineItemId) => {
+        const res = await commerce.cart.remove(lineItemId);
+
+        setCart(res.cart);
+    };
+
+
+    const handleEmptyCart = async () => {
+        const res = await commerce.cart.empty();
+
+        setCart(res.cart);
+    };
+
+    useEffect(() => {
+        fetchProducts();
+        fetchCart();
+    }, [])
+
+    // console.log(cart)
+
+    return (
+        <Router>
+            <div >
+                <NavBar totalItems={cart.total_items} />
+                <Switch>
+                    <Route exact path='/'>
+                        <Products products={products} onAddToCart={handleAddToCart} />
+
+                    </Route>
+                    <Route exact='/cart'>
+                        <Cart cart={cart} onUpdateCartQty={handleUpdateCartQty} onRemoveFromCart={handleRemoveFromCart} onEmptyCart={handleEmptyCart} />                    </Route>
+                </Switch>
+            </div>
+        </Router>
+    )
 }
 
-export default App;
+export default App
