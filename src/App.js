@@ -16,7 +16,38 @@ const App = () => {
 
     const fetchProducts = async () => {
         const res = await commerce.products.list();
+        // console.log(res.data)
         setProducts(res.data);
+    }
+
+    const fetchProductsQuery = async (productName) => {
+
+        if (productName.length == 0) {
+            return fetchProducts();
+        }
+        else if (productName.length < 2) {
+            return null;
+        }
+
+        const res = await commerce.products.list(({
+            query: productName,
+        }));
+
+
+        if (!res.data) {
+            let noRes = {
+                id: 'noResults'
+            }
+            let arr = [];
+            arr.push(noRes)
+            // console.log(arr)
+            setProducts(arr)
+            // console.log(noRes)
+        }
+        else {
+            setProducts(res.data);
+        }
+
     }
 
     const fetchCart = async () => {
@@ -61,10 +92,10 @@ const App = () => {
 
     return (
         <Router>
-            <NavBar totalItems={cart.total_items} />
+            <NavBar totalItems={cart.total_items} fetchProductsQuery={(productsQuery) => fetchProductsQuery(productsQuery)} />
             <Switch>
                 <Route exact path='/'>
-                    <Products products={products} onAddToCart={handleAddToCart} />
+                    <Products products={products} onAddToCart={handleAddToCart} fetchProducts={fetchProducts} />
 
                 </Route>
                 <Route exact path='/cart'>
