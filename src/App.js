@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 // import Products from './components/Products/Products';
 // import NavBar from './components/NavBar/NavBar';
 
-import { Products, NavBar, Cart } from './components';
+import { Products, NavBar, Cart, Checkout } from './components';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import { commerce } from './lib/commerce' // this is like backend with my API key;
@@ -61,17 +61,19 @@ const App = () => {
 
     return (
         <Router>
-            <div >
-                <NavBar totalItems={cart.total_items} />
-                <Switch>
-                    <Route exact path='/'>
-                        <Products products={products} onAddToCart={handleAddToCart} />
+            <NavBar totalItems={cart.total_items} />
+            <Switch>
+                <Route exact path='/'>
+                    <Products products={products} onAddToCart={handleAddToCart} />
 
-                    </Route>
-                    <Route exact='/cart'>
-                        <Cart cart={cart} onUpdateCartQty={handleUpdateCartQty} onRemoveFromCart={handleRemoveFromCart} onEmptyCart={handleEmptyCart} />                    </Route>
-                </Switch>
-            </div>
+                </Route>
+                <Route exact path='/cart'>
+                    <Cart cart={cart} onUpdateCartQty={handleUpdateCartQty} onRemoveFromCart={handleRemoveFromCart} onEmptyCart={handleEmptyCart} />
+                </Route>
+                <Route exact path='/checkout'>
+                    <Checkout cart={cart} />
+                </Route>
+            </Switch>
         </Router>
     )
 }

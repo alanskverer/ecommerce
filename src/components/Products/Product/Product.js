@@ -6,9 +6,7 @@ import useStyles from './styles';
 
 const Product = ({ product, onAddToCart }) => {
     const classes = useStyles();
-    // const { name, price, description, image } = props.product
-    // console.log(props.product);
-    // return <div>Test</div>
+
     return (
         <Card className={classes.root}>
             <CardMedia className={classes.media} image={product.media.source} title={product.name} />
